@@ -38,6 +38,9 @@ app.post('/', upload.single('file'), async (req, res) => {
             }
         });
 
+        fs.unlink(req.file.path, (err) => {
+            if (err) console.error('Failed to delete uploaded file:', err);
+        });
 
         res.json(response.data);
     } catch (error) {
