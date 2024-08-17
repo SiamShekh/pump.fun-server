@@ -3,6 +3,7 @@ const fileUpload = require('express-fileupload');
 const _FORMDATA = require('express-formidable');
 const cors = require('cors');
 const HomeDataService = require('./api/HomeData');
+const Charts = require('./api/Charts');
 const app = express();
 app.use(cors({
     origin: "*",
@@ -100,6 +101,7 @@ app.get('/search', async (req, res) => {
 });
 
 app.get('/home-informission', HomeDataService);
+app.get('/charts', Charts);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
