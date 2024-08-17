@@ -1,3 +1,7 @@
+const transformedValue = (value) => {
+    const no = (value * 1e8).toFixed(4);
+    return no;
+}
 
 const Charts = async (req, res) => {
     try {
@@ -11,8 +15,6 @@ const Charts = async (req, res) => {
 
         // Process and filter the candlestick data
         const ChartFilter = charts.map((item, index) => {
-            // Convert timestamp to human-readable date
-            const date = new Date(item.timestamp * 1000).toISOString().split('T')[0];
 
             // Convert prices to SOL
             const openPriceSOL = Number(item.open) / solPrice?.solPrice;
@@ -21,11 +23,11 @@ const Charts = async (req, res) => {
             const closePriceSOL = Number(item.close) / solPrice?.solPrice;
 
             return {
-                date: date,
-                open: openPriceSOL.toFixed(15),
-                high: highPriceSOL.toFixed(15),
-                low: lowPriceSOL.toFixed(15),
-                close: closePriceSOL.toFixed(15),
+                date: item?.timestamp,
+                open: transformedValue(openPriceSOL.toFixed(15)),
+                high: transformedValue(highPriceSOL.toFixed(15)),
+                low: transformedValue(lowPriceSOL.toFixed(15)),
+                close: transformedValue(closePriceSOL.toFixed(15)),
                 volume: item.volume,
                 slot: item.slot,
             };
