@@ -1,7 +1,12 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const _FORMDATA = require('express-formidable');
+const cors = require('cors');
 const app = express();
+app.use(cors({
+    origin: "*",
+    credentials: true
+}))
 app.use(fileUpload());
 app.use(_FORMDATA());
 
