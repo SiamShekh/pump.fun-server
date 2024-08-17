@@ -1,9 +1,7 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const _FORMDATA = require('express-formidable');
-const axios = require('axios');
 const app = express();
-
 app.use(fileUpload());
 app.use(_FORMDATA());
 
@@ -40,6 +38,33 @@ app.post('/', async (req, res) => {
     }
 });
 
+app.get('/list', async (req, res) => {
+    const data = await fetch("https://frontend-api.pump.fun/coins?offset=0&limit=500&sort=last_trade_timestamp&order=DESC&includeNsfw=true")
+        .then(res => res.json());
+
+    res.send(data);
+});
+
+app.get('/popular', async (req, res) => {
+    const data = await fetch("https://frontend-api.pump.fun/coins?offset=0&limit=50&sort=reply_count&order=DESC&includeNsfw=true")
+        .then(res => res.json());
+
+    res.send(data);
+});
+
+app.get('/top-gainer', async (req, res) => {
+    const data = await fetch("https://frontend-api.pump.fun/coins?offset=0&limit=50&sort=market_cap&order=DESC&includeNsfw=true")
+        .then(res => res.json());
+
+    res.send(data);
+});
+
+app.get('/new', async (req, res) => {
+    const data = await fetch("https://frontend-api.pump.fun/coins?offset=0&limit=50&sort=created_timestamp&order=DESC&includeNsfw=true")
+        .then(res => res.json());
+
+    res.send(data);
+});
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
