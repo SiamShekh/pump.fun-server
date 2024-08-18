@@ -41,13 +41,50 @@ const InsertToken = async (data) => {
     return TokenInfo
 };
 
-const SingledataInformission = async (req, res) => {
-    const mint = req.params.mint;
+const transformedValue = (value) => {
+    const no = (value * 1e8).toFixed(4);
+    return no;
+}
+
+const Charts = async (contract) => {
+    const solPrice = await fetch(`https://frontend-api.pump.fun/sol-price`).then(res => res.json());
+
+    const charts = await fetch(`https://frontend-api.pump.fun/candlesticks/${contract}?offset=0&limit=1000&timeframe=5`).then(res => res.json());
+
+    const ChartFilter = charts.map((item, index) => {
+
+        const openPriceSOL = Number(item.open) / solPrice?.solPrice;
+        const highPriceSOL = Number(item.high) / solPrice?.solPrice;
+        const lowPriceSOL = Number(item.low) / solPrice?.solPrice;
+        const closePriceSOL = Number(item.close) / solPrice?.solPrice;
+
+        return {
+            date: item?.timestamp,
+            open: transformedValue(openPriceSOL.toFixed(15)),
+            high: transformedValue(highPriceSOL.toFixed(15)),
+            low: transformedValue(lowPriceSOL.toFixed(15)),
+            close: transformedValue(closePriceSOL.toFixed(15)),
+            volume: item.volume,
+            slot: item.slot,
+        };
+    });
+
+    return ChartFilter;
+}
+
+const DetailsInformission = async (req, res) => {
+    const mint = req.query.mint;
     const SignleData = await TokenModel.findOne({ mint: mint });
-    res.send(SignleData);
+
+    const Reply = await fetch(`https://frontend-api.pump.fun/replies/${mint}?limit=1000&offset=0`)
+        .then(res => res.json());
+
+    const chart = await Charts(mint);
+
+    res.send({ SignleData, Reply, chart });
 };
 
 module.exports = {
     InsertToken,
-    SingledataInformission
+    DetailsInformission
 };

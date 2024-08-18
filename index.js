@@ -4,8 +4,9 @@ const _FORMDATA = require('express-formidable');
 const cors = require('cors');
 const HomeDataService = require('./api/HomeData');
 const Charts = require('./api/Charts');
+require('dotenv').config()
 const { Schema, default: mongoose } = require('mongoose');
-const { InsertToken, SingledataInformission } = require('./api/Database');
+const { InsertToken, DetailsInformission } = require('./api/Database');
 const app = express();
 app.use(cors({
     origin: "*",
@@ -14,7 +15,7 @@ app.use(cors({
 app.use(fileUpload());
 app.use(_FORMDATA());
 
-mongoose.connect("mongodb+srv://Siam4201:Asik1234*@cluster0.yb7xjgu.mongodb.net/pump-fun")
+mongoose.connect(process.env.URI)
 
 
 app.post('/', async (req, res) => {
@@ -87,7 +88,7 @@ app.get('/new', async (req, res) => {
 
 app.get('/home-informission', HomeDataService);
 app.get('/charts', Charts);
-app.get('/single-data/:mint', SingledataInformission);
+app.get('/details', DetailsInformission);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
