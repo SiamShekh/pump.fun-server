@@ -1,5 +1,6 @@
-const cheerio = require('cheerio');
 const { Schema, default: mongoose } = require('mongoose');
+const Holders = require('./coins-holder/CoinHolderByContractAddress');
+
 const TokenSchemas = new Schema({
     mint: String,
     name: String,
@@ -72,6 +73,7 @@ const Charts = async (contract) => {
     return ChartFilter;
 }
 
+
 const DetailsInformission = async (req, res) => {
     const mint = req.query.mint;
     const SignleData = await TokenModel.findOne({ mint: mint });
@@ -79,9 +81,12 @@ const DetailsInformission = async (req, res) => {
     const Reply = await fetch(`https://frontend-api.pump.fun/replies/${mint}?limit=1000&offset=0`)
         .then(res => res.json());
 
-    const chart = await Charts(mint);
+    const Trade = await fetch(`https://frontend-api.pump.fun/trades/${mint}?limit=1000&offset=0`)
+        .then(res => res.json());
 
-    res.send({ SignleData, Reply, chart });
+    const chart = await Charts(mint);
+    const Holder = await Holders(mint);
+    res.send({ SignleData, Reply, chart, Trade, Holder });
 };
 
 module.exports = {

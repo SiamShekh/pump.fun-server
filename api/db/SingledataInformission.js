@@ -1,2 +1,0 @@
-const TokenModel = require("../..");
-

@@ -7,6 +7,8 @@ const Charts = require('./api/Charts');
 require('dotenv').config()
 const { Schema, default: mongoose } = require('mongoose');
 const { InsertToken, DetailsInformission } = require('./api/Database');
+const CoinHolderByContractAddress = require('./api/coins-holder/CoinHolderByContractAddress');
+const { Connection } = require('@solana/web3.js');
 const app = express();
 app.use(cors({
     origin: "*",
@@ -16,7 +18,6 @@ app.use(fileUpload());
 app.use(_FORMDATA());
 
 mongoose.connect(process.env.URI)
-
 
 app.post('/', async (req, res) => {
     try {
@@ -89,7 +90,7 @@ app.get('/new', async (req, res) => {
 app.get('/home-informission', HomeDataService);
 app.get('/charts', Charts);
 app.get('/details', DetailsInformission);
-
+// app.get('/holders/:contractAddress', CoinHolderByContractAddress)
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log(`Proxy server is running on port ${PORT}`);
