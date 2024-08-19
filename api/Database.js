@@ -1,46 +1,6 @@
 const { Schema, default: mongoose } = require('mongoose');
 const Holders = require('./coins-holder/CoinHolderByContractAddress');
-
-const TokenSchemas = new Schema({
-    mint: String,
-    name: String,
-    symbol: String,
-    description: String,
-    metadata_uri: String,
-    twitter: String,
-    telegram: String,
-    bonding_curve: String,
-    associated_bonding_curve: String,
-    creator: String,
-    created_timestamp: String,
-    raydium_pool: String,
-    complete: String,
-    virtual_sol_reserves: String,
-    virtual_token_reserves: String,
-    hidden: String,
-    total_supply: String,
-    website: String,
-    show_name: String,
-    last_trade_timestamp: String,
-    king_of_the_hill_timestamp: String,
-    market_cap: String,
-    reply_count: String,
-    last_reply: String,
-    nsfw: String,
-    market_id: String,
-    inverted: String,
-    is_currently_live: String,
-    username: String,
-    profile_image: String,
-    usd_market_cap: String,
-});
-
-const TokenModel = mongoose.model("Token", TokenSchemas);
-
-const InsertToken = async (data) => {
-    const TokenInfo = await TokenModel.insertMany(data);
-    return TokenInfo
-};
+const { load } = require('cheerio');
 
 const transformedValue = (value) => {
     const no = (value * 1e8).toFixed(4);
@@ -76,7 +36,12 @@ const Charts = async (contract) => {
 
 const DetailsInformission = async (req, res) => {
     const mint = req.query.mint;
-    const SignleData = await TokenModel.findOne({ mint: mint });
+
+    const htmlFetch = await fetch(`https://pump.fun/${mint}`).then(res => res.text());
+    const $ = load(htmlFetch);
+    const bonding_curve = $("script").text().split("Taking too long")[1].split("children")[1].split("coin")[1].split("toggleNsf")[0];
+    let cleanedString = bonding_curve.replace(/\\+/g, '').slice(2,-2);
+    const SignleData = JSON.parse(cleanedString);
 
     const Reply = await fetch(`https://frontend-api.pump.fun/replies/${mint}?limit=1000&offset=0`)
         .then(res => res.json());
@@ -90,6 +55,5 @@ const DetailsInformission = async (req, res) => {
 };
 
 module.exports = {
-    InsertToken,
     DetailsInformission
 };
