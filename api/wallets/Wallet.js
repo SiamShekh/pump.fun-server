@@ -43,5 +43,6 @@ const RetriveWallets = async (req, res) => {
 
 module.exports = {
     CreateWallets,
-    RetriveWallets
+    RetriveWallets,
+    WalletsModel
 }

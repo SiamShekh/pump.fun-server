@@ -13,6 +13,7 @@ const FormData = require('form-data');
 const { default: axios } = require('axios');
 const { CreateWallets, RetriveWallets } = require('./api/wallets/Wallet');
 const { load } = require('cheerio');
+const Profile = require('./api/Profile');
 
 const app = express();
 app.use(cors({
@@ -58,6 +59,7 @@ app.get('/new', async (req, res) => {
 app.get('/home-informission', HomeDataService);
 app.get('/charts', Charts);
 app.get('/details', DetailsInformission);
+app.get('/profile', Profile);
 
 app.post('/ipfs', async (req, res) => {
     if (req?.fields?.file) {
