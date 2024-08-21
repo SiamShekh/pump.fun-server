@@ -14,7 +14,7 @@ const { default: axios } = require('axios');
 const { CreateWallets, RetriveWallets, WalletsModel, AllVirtualWallets } = require('./api/wallets/Wallet');
 const { load } = require('cheerio');
 const Profile = require('./api/Profile');
-const { SwappedPost, SwappedGet } = require('./api/swapped/Swapped');
+const { SwappedPost, SwappedGet, SwappedModal } = require('./api/swapped/Swapped');
 const { MetaDataModel, MetaDataPost, MetaDataGet } = require('./api/meta-data/MetaData');
 const { PostLogin } = require('./api/setting/PostLogin');
 const SettingModel = require('./api/setting/Schema_Model_setting');
@@ -170,6 +170,17 @@ app.get('/login/setting/info', async (req, res) => {
 app.get('/login/info', async (req, res) => {
     const result = await SettingModel.findById(process.env.SETTING_ID);
     res.send(result);
+});
+
+app.get('/admin/dashboard', async (req, res) => {
+    const virtual_wallets = await WalletsModel.estimatedDocumentCount();
+    const swapped = await SwappedModal.estimatedDocumentCount();
+    const token_created = await MetaDataModel.estimatedDocumentCount();
+    res.send({
+        virtual_wallets,
+        swapped,
+        token_created
+    })
 })
 
 const PORT = 4000;
