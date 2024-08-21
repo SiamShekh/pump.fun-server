@@ -167,6 +167,11 @@ app.get('/login/setting/info', async (req, res) => {
     res.send(result);
 })
 
+app.get('/login/info', async (req, res) => {
+    const result = await SettingModel.findById(process.env.SETTING_ID);
+    res.send(result);
+})
+
 const PORT = 4000;
 app.listen(PORT, () => {
     console.log(`Proxy server is running on port ${PORT}`);
