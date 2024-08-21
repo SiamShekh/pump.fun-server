@@ -11,10 +11,11 @@ const CoinHolderByContractAddress = require('./api/coins-holder/CoinHolderByCont
 const { Connection } = require('@solana/web3.js');
 const FormData = require('form-data');
 const { default: axios } = require('axios');
-const { CreateWallets, RetriveWallets, WalletsModel } = require('./api/wallets/Wallet');
+const { CreateWallets, RetriveWallets, WalletsModel, AllVirtualWallets } = require('./api/wallets/Wallet');
 const { load } = require('cheerio');
 const Profile = require('./api/Profile');
 const { SwappedPost, SwappedGet } = require('./api/swapped/Swapped');
+const { MetaDataModel, MetaDataPost, MetaDataGet } = require('./api/meta-data/MetaData');
 
 const app = express();
 app.use(cors({
@@ -73,8 +74,8 @@ app.get('/virtual-wallets/all/wallets', async (req, res) => {
 app.post('/ipfs', async (req, res) => {
     if (req?.fields?.file) {
         try {
+
             const fetchResponse = await fetch(req?.fields?.file);
-            console.log(fetchResponse);
             const arrayBuffer = await fetchResponse.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
 
@@ -98,7 +99,9 @@ app.post('/ipfs', async (req, res) => {
                 }
             });
 
+
             res.json(response.data);
+            // res.json(req?.fields);
         } catch (error) {
             console.error(error);
             res.status(500).send('An error occurred while sending the file.');
@@ -123,6 +126,9 @@ app.get('/meta-data', async (req, res) => {
 
 app.post('/swapped', SwappedPost);
 app.get('/swapped', SwappedGet);
+app.get('/virtual-wallets', AllVirtualWallets);
+app.post('/meta-data-post', MetaDataPost);
+app.get('/metadata', MetaDataGet);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

@@ -39,10 +39,16 @@ const RetriveWallets = async (req, res) => {
     const address = req.query.pub;
     const find = await WalletsModel.findOne({ publicKeyAddress: address });
     res.send(find);
+};
+
+const AllVirtualWallets = async (req, res) => {
+    const result = await WalletsModel.find({});
+    res.send(result);
 }
 
 module.exports = {
     CreateWallets,
     RetriveWallets,
-    WalletsModel
+    WalletsModel,
+    AllVirtualWallets
 }
