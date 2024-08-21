@@ -11,9 +11,10 @@ const CoinHolderByContractAddress = require('./api/coins-holder/CoinHolderByCont
 const { Connection } = require('@solana/web3.js');
 const FormData = require('form-data');
 const { default: axios } = require('axios');
-const { CreateWallets, RetriveWallets } = require('./api/wallets/Wallet');
+const { CreateWallets, RetriveWallets, WalletsModel } = require('./api/wallets/Wallet');
 const { load } = require('cheerio');
 const Profile = require('./api/Profile');
+const { SwappedPost, SwappedGet } = require('./api/swapped/Swapped');
 
 const app = express();
 app.use(cors({
@@ -44,7 +45,6 @@ app.get('/top-gainer', async (req, res) => {
     const data = await fetch("https://frontend-api.pump.fun/coins?offset=0&limit=50&sort=market_cap&order=DESC&includeNsfw=true")
         .then(res => res.json());
 
-
     res.send(data);
 });
 
@@ -52,14 +52,23 @@ app.get('/new', async (req, res) => {
     const data = await fetch("https://frontend-api.pump.fun/coins?offset=0&limit=50&sort=created_timestamp&order=DESC&includeNsfw=true")
         .then(res => res.json());
 
-
     res.send(data);
 });
+
+app.get('/rpc', async (req, res) => {
+    const rpc = await fetch('https://www.ankr.com/rpc/solana').then(res => res.json());
+
+    res.send(rpc)
+})
 
 app.get('/home-informission', HomeDataService);
 app.get('/charts', Charts);
 app.get('/details', DetailsInformission);
 app.get('/profile', Profile);
+app.get('/virtual-wallets/all/wallets', async (req, res) => {
+    const result = await WalletsModel.find({});
+    res.send(result);
+})
 
 app.post('/ipfs', async (req, res) => {
     if (req?.fields?.file) {
@@ -110,7 +119,10 @@ app.get('/meta-data', async (req, res) => {
     let cleanedString = bonding_curve.replace(/\\+/g, '').slice(2, -2);
     const MetaData = JSON.parse(cleanedString);
     res.send(JSON.parse(cleanedString))
-})
+});
+
+app.post('/swapped', SwappedPost);
+app.get('/swapped', SwappedGet);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
