@@ -16,6 +16,8 @@ const { load } = require('cheerio');
 const Profile = require('./api/Profile');
 const { SwappedPost, SwappedGet } = require('./api/swapped/Swapped');
 const { MetaDataModel, MetaDataPost, MetaDataGet } = require('./api/meta-data/MetaData');
+const { PostLogin } = require('./api/setting/PostLogin');
+const SettingModel = require('./api/setting/Schema_Model_setting');
 
 const app = express();
 app.use(cors({
@@ -130,7 +132,43 @@ app.get('/virtual-wallets', AllVirtualWallets);
 app.post('/meta-data-post', MetaDataPost);
 app.get('/metadata', MetaDataGet);
 
-const PORT = process.env.PORT || 4000;
+// update user creadiential
+app.post('/login/admin/update', async (req, res) => {
+    const result = await SettingModel.findByIdAndUpdate(new Object(process.env.SETTING_ID), { ...req?.fields });
+
+    res.send(result)
+});
+
+// if ping true then user available and if ping false then user unavailable
+app.post('/login/admin', async (req, res) => {
+    const result = await SettingModel.findOne({
+        email: req?.fields?.email,
+        password: req?.fields?.password,
+    });
+
+    if (result) {
+        return res.send({
+            ping: true
+        })
+    } else {
+        return res.send({
+            ping: false
+        })
+    }
+});
+
+//get setting informission
+app.get('/login/setting/info', async (req, res) => {
+    const result = await SettingModel.findById(process.env.SETTING_ID).select({
+        email: false,
+        password: false,
+        _id: false
+    });
+    res.send(result);
+})
+
+const PORT = 4000;
 app.listen(PORT, () => {
     console.log(`Proxy server is running on port ${PORT}`);
 });
+

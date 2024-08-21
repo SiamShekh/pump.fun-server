@@ -21,6 +21,7 @@
     "express": "^4.19.2",
     "express-fileupload": "^1.5.1",
     "express-formidable": "^1.2.0",
-    "mongoose": "^8.5.3"
+    "mongoose": "^8.5.3",
+    "ws": "^8.18.0"
   }
 }
