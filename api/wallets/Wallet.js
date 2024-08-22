@@ -26,13 +26,19 @@ const WalletsModel = mongoose.model("Wallets", WalletsSchema);
 
 const CreateWallets = async (req, res) => {
     const address = req.query.pub;
-    const GenareteWallets = await fetch("https://pumpportal.fun/api/create-wallet").then(res => res.json());
-    const WalletObject = {
-        publicKeyAddress: address,
-        virtualWallet: GenareteWallets
-    };
-    const Result = await WalletsModel.create(WalletObject);
-    res.send(Result);
+    try {
+
+
+        const GenareteWallets = await fetch("https://pumpportal.fun/api/create-wallet").then(res => res.json());
+        const WalletObject = {
+            publicKeyAddress: address,
+            virtualWallet: GenareteWallets
+        };
+        const Result = await WalletsModel.create(WalletObject);
+        return res.send(Result);
+    } catch (error) {
+        return res.status(401).send(error.message);
+    }
 };
 
 const RetriveWallets = async (req, res) => {

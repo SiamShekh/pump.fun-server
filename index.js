@@ -21,9 +21,14 @@ const SettingModel = require('./api/setting/Schema_Model_setting');
 
 const app = express();
 app.use(cors({
-    origin: "*",
+    origin: [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "https://onlypumps.io",
+    ],
     credentials: true
-}))
+}));
+
 app.use(fileUpload());
 app.use(_FORMDATA());
 
